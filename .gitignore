@@ -11,3 +11,4 @@
 *.Rhistory
 *.xml
 *res_DESeq_ArabidopsisThaliana.txt
+*MA2_DEGs.csv
