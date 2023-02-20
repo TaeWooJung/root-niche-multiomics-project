@@ -3,9 +3,11 @@
 \\ Folders
 /ChIP-seq/Data/ChIP-seq/raw\ data
 /ChIP-seq/Data/ChIP-seq/macs2
+/RNA-seq/kallisto_quant
 
 \\ Files
 *.CEL
 *.RData
 *.Rhistory
 *.xml
+*res_DESeq_ArabidopsisThaliana.txt
