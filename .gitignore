@@ -1,0 +1,5 @@
+*.CEL
+/ChIP-seq/Data/ChIP-seq/raw\ data
+*.RData
+*.Rhistory
+.DS_Store
