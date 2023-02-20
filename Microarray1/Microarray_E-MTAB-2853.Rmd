@@ -1,0 +1,237 @@
+---
+title: 'Analysis of Microarray Data 1 (E-MTAB-2853)'
+output:
+  pdf_document:
+    dev: png
+    toc: true
+  html_document:
+    df_print: paged
+    toc: true
+header-includes: \setlength{\emergencystretch}{1em}
+---
+
+```{r global_options, include=FALSE, message=F, echo=F}
+knitr::opts_chunk$set(fig.align = 'center')
+knitr::opts_chunk$set(out.width = '90%')
+knitr::opts_chunk$set(fig.width=12, fig.height=8)
+
+library("ArrayExpress")
+library("arrayQualityMetrics")
+library("limma")
+library("siggenes")
+library("affy")
+library("htmltools")
+library("dplyr")
+library("kableExtra")
+```
+
+# 1. Data
+
+## General info
+Microarray type: RNA samples prepared for hybridization to Affymetrix microarrays (E-MTAB-2853).
+
+## Load sdrf file
+For our analysis, we will use data from the seedlings induced for four hours with dexamethansone or a mock solution.
+```{r}
+sdrf <- read.delim("./Data/Microarray/E-MTAB-2853.sdrf.txt")
+# select only the seedlings induced with dexamethansone or a mock solution
+sdrf <- as.data.frame(sdrf[c(5,6,7,8,9,10,11,12),])
+rownames(sdrf) <- sdrf$Array.Data.File
+# correct value from "Factor.Value..time" column of row "mz_210906_mz_D_1_B.CEL"
+# 4 -> 1
+sdrf$Factor.Value..time.[2] <- 1
+sdrf[,c("Source.Name","Array.Design.REF", "Factor.Value..compound.",
+        "Factor.Value..time.")]
+```
+
+## Load in the data
+```{r}
+# read in microarray data
+exonCELs <- list.celfiles("./Data/Microarray/")
+data.raw <- ReadAffy(filenames = exonCELs, celfile.path = "./Data/Microarray/", 
+                     phenoData = sdrf)
+# rename column names of phenoData
+pData(data.raw) <- rename(pData(data.raw), "treatment"="Factor.Value..compound.", 
+                          "time"="Factor.Value..time.")
+# rename treatment values of phenoData
+pData(data.raw)$treatment <- pData(data.raw) %>%
+  select(treatment) %>%
+  mutate(
+    treatment = recode(treatment,"Dexamethasone"="DEX", "mock solution"="mock")
+  )
+pData(data.raw)$treatment <- pData(data.raw)$treatment[[1]]
+```
+
+## Quality Control on raw data
+
+arrayQualityMetrics (open "index.html" file for a full overview of the output)
+```{r, include = FALSE, message=F}
+arrayQualityMetrics(data.raw, outdir="./Data/Microarray/raw", force=T)
+arrayQualityMetrics(data.raw, outdir="./Data/Microarray/rawlog", force=T, 
+                    do.logtransform=T)
+```
+
+# 2. Preprocessing
+The preprocessing includes background correction, between array intensity adjustment (normalization) and probeset summarization.
+```{r, include = FALSE, message=F}
+data.rma<- affy::rma(data.raw,background=T)
+arrayQualityMetrics(data.rma,outdir="./Data/Microarray/rma_processed",force=T)  			#RMA produces log-transformed data
+```
+
+```{r}
+# Before preprocessing
+dim(exprs(data.raw))
+# After preprocessing
+dim(exprs(data.rma))
+```
+
+Check data distribution
+```{r}
+boxplot(exprs(data.rma), names=data.rma$Source.Name)
+```
+Phenotypic data and the intensity values
+```{r}
+pData(data.rma)
+head(exprs(data.rma))
+```
+
+# 3. Differential Analysis
+
+## Design Matrix and Contrast
+
+Set the effect of interest (mock vs Dexamethasone treatment) as a factor, as well as the blocking time effect.
+```{r}
+pd <- pData(data.rma)
+pd$treatment <- pd$treatment
+treatment <- pd$treatment
+pd$time <- as.factor(pd$time)
+time <- pd$time
+```
+
+Define design matrix
+```{r}
+design <- model.matrix(~treatment+time)
+colnames(design) <- c("Intercept","mock.vs.DEX","time_4h")
+design
+contrast.matrix <- makeContrasts(TvsN="mock.vs.DEX",
+                                 levels=design)
+```
+
+## Fitting the model
+```{r}
+fit <- lmFit(data.rma, design)
+fit2 <- contrasts.fit(fit, contrast.matrix)
+fit2 <- eBayes(fit2)
+```
+
+## Getting top genes
+```{r}
+summary_fit2 <- summary(decideTests(fit2,method="separate",adjust.method="BH",
+                                    p.value=0.05,lfc=0))
+t(summary_fit2)
+LIMMAout <- topTable(fit2,adjust="BH",number=nrow(exprs(data.rma)))
+```
+
+# 4. Identification of Differential Expression Genes (DEGs)
+
+## Annotate gene ID to respective probes
+```{r}
+annotation_MA = read.table(file="./Data/Microarray/A-AFFY-2.adf.txt", 
+                           header=TRUE, sep="\t", fill=TRUE, skip=12)
+annotation_MA <- 
+  annotation_MA[sort(annotation_MA$Composite.Element.Name,index.return=T)$ix,]
+# Check if all probes are present in both sets
+table(annotation_MA$Composite.Element.Name==sort(rownames(LIMMAout)))
+# Sort LIMMA output alphabetically on probe name
+LIMMAout_sorted <- LIMMAout[sort(rownames(LIMMAout),index.return=T)$ix,]
+# Add gene names to LIMMA output
+LIMMAout_sorted$gene_ID <- toupper(annotation_MA$Composite.Element.Database.Entry.tair.)
+LIMMAout_annot <- 
+  LIMMAout_sorted[sort(LIMMAout_sorted$adj.P.Val,index.return=T)$ix,]
+
+# Filter genes that underexpressed after DEX treatment
+LIMMAout_underexpressed <- LIMMAout_annot %>% dplyr::select(everything()) %>%
+  filter(adj.P.Val < 0.05 & logFC > 1) %>%
+  arrange(desc(logFC))
+
+# Filter genes that overexpressed after DEX treatment
+LIMMAout_overexpressed <- LIMMAout_annot %>% dplyr::select(everything()) %>%
+  filter(adj.P.Val < 0.05 & logFC < -1) %>%
+  arrange(logFC)
+
+# Manually added descriptions for 10 top significantly overexpressed and underexpressed genes
+# There were only 11 overexpressed gene so only selected 11
+LIMMAout_top15 <- rbind(LIMMAout_underexpressed[1:15,], LIMMAout_overexpressed[1:11,])
+```
+
+## Annotate genes to respective gene IDs
+```{r message=F}
+library("org.At.tair.db")
+annotated_geneID <- AnnotationDbi::select(org.At.tair.db, 
+                keys=LIMMAout_top15$gene_ID, "SYMBOL", "GENENAME", keytype = 'TAIR')
+
+LIMMAout_top15$gene_symbol <- NA
+
+for (tair in LIMMAout_top15$gene_ID){
+  LIMMAout_top15[LIMMAout_top15$gene_ID==tair,]$gene_symbol <- 
+    paste(annotated_geneID[grepl(tair, annotated_geneID$TAIR),]$SYMBOL, collapse=",")
+}
+
+LIMMAout_top15 <- LIMMAout_top15[,c(7,8,1,4,5)]
+LIMMAout_top15 %>%
+  kbl(caption = "Top-15 Significant Genes", longtable=T, booktabs = T, row.names=F) %>%
+kable_styling(latex_options="striped", position="center", full_width=F)
+```
+
+## Plotting results
+```{r}
+volcanoplot(fit2, col=as.factor(LIMMAout$adj.P.Val < 0.05), 
+            style="p-value", highlight = 10)
+```
+
+```{r}
+limma::plotMA(fit2)
+```
+
+```{r}
+plot(LIMMAout$AveExpr, LIMMAout$logFC,
+  col=as.factor(LIMMAout$adj.P.Val < 0.05), pch=20, cex=0.50,
+  xlab="Average Intensities", ylab="logFC")
+```
+
+# 5. Gene Set Analysis
+
+```{r}
+LIMMAout_filtered <- LIMMAout_annot[(LIMMAout_annot$adj.P.Val<0.09),]
+# 304 significant genes are filtered
+length(LIMMAout_filtered$tair)
+# save significant gene identifiers of significant genes (adj.P.Val<0.09)
+write.table(LIMMAout_filtered$tair,"Microarray_SignGenes.csv",sep=",")
+```
+
+## Compute GO enrichment analysis in PLAZA 5.0 Workbench
+
+```{r}
+GO_enrich_res <- read.table(
+  file="./Data/Microarray/GO_enrichment_analysis_MA1.csv", sep=",", header = TRUE)
+GO_enrich_res$FDR <- p.adjust(GO_enrich_res$P.Value, method="BH")
+GO_enrich_res <- GO_enrich_res[,c(1,6,2,3,4,8,5)]
+colnames(GO_enrich_res) <- c("GOTerm", "Description", "Ontology", "logFC", 
+                             "P.Value", "FDR", "Subset ratio(%)")
+GO_enrich_res_BP <- GO_enrich_res[GO_enrich_res$Ontology=="BP",]
+rownames(GO_enrich_res_BP) <- c(1:length(GO_enrich_res_BP$GOTerm))
+
+# Filter GO terms associated to biological processes
+GO_enrich_res_BP %>%
+  kbl(caption = "GO Enrichment Result (PLAZA 5.0 Workbench)", 
+longtable=T, booktabs = T) %>%
+  kable_styling(latex_options="striped", position="center", full_width=F)
+```
+# 6. Save results for comparison
+
+```{r}
+# Result from limma analysis
+write.table(LIMMAout_annot, sep="\t", file="Microarray_DE_results.txt")
+# Result from Gene Set Analysis
+write.table(GO_enrich_res_BP, sep="\t", file="Microarray_GSA_results.txt")
+```

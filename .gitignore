@@ -1,5 +1,11 @@
-*.CEL
+.DS_Store
+
+\\ Folders
 /ChIP-seq/Data/ChIP-seq/raw\ data
+/ChIP-seq/Data/ChIP-seq/macs2
+
+\\ Files
+*.CEL
 *.RData
 *.Rhistory
-.DS_Store
+*.xml
