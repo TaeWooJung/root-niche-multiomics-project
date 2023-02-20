@@ -1,0 +1,9 @@
+﻿SampleID, Tissue ,Condition,Replicate,bamReads,ControlID,bamControl,Peaks,PeakCaller
+H3K9/14ac_0h_1,root,H3K9/14ac,1,./Data/ChIP-seq/raw data/reads/H3K14ac_0h.bam,H3_0h_1,./Data/ChIP-seq/raw data/reads/H3_0h.bam,./Data/ChIP-seq/raw data/peaks/H3K14ac_0h_peaks.bed,bed
+H3K9/14ac_0h_2,root,H3K9/14ac,2,./Data/ChIP-seq/raw data/reads/H3K14ac_0h_Rep2.bam,H3_0h_2,./Data/ChIP-seq/raw data/reads/H3_0h_Rep2.bam,./Data/ChIP-seq/raw data/peaks/H3K14ac_0h_peaks.bed,bed
+H3K9/14ac_6h_1,root,H3K9/14ac_wounding,1,./Data/ChIP-seq/raw data/reads/H3K14ac_6h.bam,H3_6h_1,./Data/ChIP-seq/raw data/reads/H3_6h.bam,./Data/ChIP-seq/raw data/peaks/H3K14ac_6h_peaks.bed,bed
+H3K9/14ac_6h_2,root,H3K9/14ac_wounding,2,./Data/ChIP-seq/raw data/reads/H3K14ac_6h_Rep2.bam,H3_6h_2,./Data/ChIP-seq/raw data/reads/H3_6h_Rep2.bam,./Data/ChIP-seq/raw data/peaks/H3K14ac_6h_peaks.bed,bed
+H3K27me3_0h_1,root,H3K27me3,1,./Data/ChIP-seq/raw data/reads/H3K27me3_0h.bam,H3_0h_1,./Data/ChIP-seq/raw data/reads/H3_0h.bam,./Data/ChIP-seq/raw data/peaks/H3K27me3_0h_peaks.bed,bed
+H3K27me3_0h_2,root,H3K27me3,2,./Data/ChIP-seq/raw data/reads/H3K27me3_0h_Rep2.bam,H3_0h_2,./Data/ChIP-seq/raw data/reads/H3_0h_Rep2.bam,./Data/ChIP-seq/raw data/peaks/H3K27me3_0h_peaks.bed,bed
+H3K27me3_6h_1,root,H3K27me3_wounding,1,./Data/ChIP-seq/raw data/reads/H3K27me3_6h.bam,H3_6h_1,./Data/ChIP-seq/raw data/reads/H3_6h.bam,./Data/ChIP-seq/raw data/peaks/H3K27me3_6h_peaks.bed,bed
+H3K27me3_6h_2,root,H3K27me3_wounding,2,./Data/ChIP-seq/raw data/reads/H3K27me3_6h_Rep2.bam,H3_6h_2,./Data/ChIP-seq/raw data/reads/H3_6h_Rep2.bam,./Data/ChIP-seq/raw data/peaks/H3K27me3_6h_peaks.bed,bed
