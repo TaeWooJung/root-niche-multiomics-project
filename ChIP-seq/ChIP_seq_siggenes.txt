@@ -1,0 +1,53 @@
+GeneID	Enriched	Gene symbol,...Protein	Description
+AT1G15050	+	IAA34	DNA-templated transcription regulation
+AT1G17380	+	JAZ5	response to wounding
+AT1G30135	+	JAZ8	response to wounding
+AT1G33030	+	O-methyltransferase family protein	Methylation
+AT1G43160	+	ERF113,RAP2.6	response to wounding
+AT1G55020	+	LOX1	response to wounding
+			regulation of root development
+AT1G67000	+	Protein kinase superfamily protein	response to wounding
+AT1G73260	+	KTI1	response to wounding
+AT1G75490	+	DREB subfamily A-2 of ERF/AP2	(+) regulate DNA-templated transcription,
+			response to stress
+AT2G26380	+	Leucine-rich repeat (LRR) family protein	response to wounding
+AT2G44840	+	ERF13	regulation of DNA-templated transcription
+AT2G47270	+	UPB1	regulation of DNA-templated transcription,
+			regulation of root development
+AT2G47950	+	myelin transcription factor-like protein	response to wounding
+AT3G01970	+	WRKY45	regulation of DNA-templated transcription
+AT3G15500	+	NAC3	regulation of DNA-templated transcription
+AT3G21750	+	UGT71B1	response to wounding,
+			root epidermal cell differentiation
+AT3G48520	+	CYP94B3	response to wounding
+AT4G06746	+	DEAR5,RAP2.9	regulation of post-embryonic development
+AT4G15530	+	PPDK	root development
+AT4G22710	+	CYP706A2	response to wounding
+AT4G35770	+	SEN1	response to wounding
+AT5G01380	+	Homeodomain-like superfamily protein	regulation of DNA-templated transcription
+AT5G06570	+	alpha/beta-Hydrolases superfamily protein	response to wounding,
+			regulation of root development,
+			root morphogenesis
+AT5G13220	+	JAZ10	response to wounding
+AT5G13330	+	RAP2.6L	(+) regulate DNA-templated transcription
+AT5G18470	+	Curculin-like lectin family protein	response to wounding
+AT5G19110	+	Eukaryotic aspartyl protease family protein	response to wounding
+AT5G21960	+	ERF016	regulation of DNA-templated transcription,
+			response to wounding
+AT5G39610	+	NAC6	(+) regulate DNA-templated transcription,
+			lateral root development
+AT5G42930	+	alpha/beta-Hydrolases superfamily protein	response to wounding,root development
+AT5G43650	+	BHLH92	regulation of DNA-templated transcription
+AT5G48110	+	TPS20	root morphogenesis
+AT5G49450	+	bZIP1	(+) regulate DNA-templated transcription
+AT5G49690	+	UGT91C1	tissue development
+AT5G64750	+	ABR1	root regeneration
+AT1G45130	-	BGAL5	cell morphogenesis,tissue development
+AT3G12830	-	SAUR72	regulation of DNA-templated transcription,
+			response to wounding
+AT3G25790	-	HHO1	regulation of DNA-templated transcription
+AT3G49930	-	C2H2 and C2HC zinc fingers superfamily protein	regulation of DNA-templated transcription
+AT3G54720	-	AMP1	root development
+AT4G36240	-	GATA7	cell differentiation,
+			(+) regulate DNA-templated transcription
+AT5G25810	-	ERF040	regulation of DNA-templated transcription

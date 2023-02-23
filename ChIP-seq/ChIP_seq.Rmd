@@ -301,7 +301,7 @@ dba.show(wounding_DA_H3K914ac, bContrasts=TRUE)
 dba.show(wounding_DA_H3K27me3, bContrasts=TRUE)
 ```
 
-From analysis, 86 differentially bound sites were identified for H3K9/14ac after wounding. However, 0 differentially bound sites were found for H3K27me3 after wounding. Since there was no differentially bound sites for H3K27me3, we will only look into H3K9/14ac.
+From analysis, 88 differentially bound sites were identified for H3K9/14ac after wounding. 2 differentially bound sites were found for H3K27me3 after wounding.
 ```{r}
 plot(wounding_DA_H3K914ac, contrast=1, main="Correlation Heatmap of H3K9/14ac after wounding")
 plot(wounding_DA_H3K27me3, contrast=1, main="Correlation Heatmap of H3K27me3 after wounding")
@@ -465,6 +465,7 @@ Export regions as a bed file for visualization
 ```{r}
 write.table(GOIs[,c(1,2,3,9)], 
         file="ChIP_seq_ROIs.bed", quote=F, sep="\t", row.names=F, col.names=F)
+# write.table(GOIs[!is.na(GOIs$description),][,c(1,2,3,4, 9)],file="ChIP_seq_ROIs_42.bed", quote=F, sep="\t", row.names=F, col.names=F)
 ```
 
 For visualization, the bed file representing region of interest, Broadpreak files generated from MACS2 and BigWig files were used. BigWig files that were averaged with two replicates of bamCoverage files and normalized with RPKM (Reads Per Kilobase Million) method were created using deepTools package. Then, Integrative Genomics Viewer (IGV) from Broad Institute was used for visualization.
